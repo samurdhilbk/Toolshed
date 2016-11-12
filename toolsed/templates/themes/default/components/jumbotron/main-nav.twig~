@@ -1,0 +1,13 @@
+{% set navigation_bar = [['', 'Home'], ['account/login', 'Login']] %}
+{% set can_register = site.can_register|default(false) %}
+{% if can_register %}
+    {% set navigation_bar = navigation_bar|merge([['account/register', 'Register']])  %}
+{% endif%}
+{% set active_page = page.active_page|default('') %}
+{% block navigation %}
+<div class="header row">
+    <ul class="nav navbar-nav nav-pills pull-right col-sm-12 text-center" id="navigation">
+   	   <a  href="{{site.uri.public}}" class="btn btn-link">{{site.site_title}}</a>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,175 @@
+<div class="sidebar-nav navbar-collapse">
+    <ul class="nav" id="side-menu">
+
+
+        {% if checkAccess('uri_zerg') %}
+        <li>
+            <a href="{{site.uri.public}}/zerg"><i class="sc sc-zerg fa fa-fw"></i> Tertiary </a>
+        </li>
+        {% endif %}
+        {% if checkAccess('uri_users') %}
+        <li>
+            <a href="{{site.uri.public}}/users"><i class="fa fa-users fa-fw"></i> {{ translate("MENU_USERS") }}</a>
+        </li>
+        {% endif %}
+        {% if checkAccess('uri_group_users', { ('primary_group_id') : 4 }) %}
+        <li>
+            <a href="{{site.uri.public}}/users/zerglings"><i class="sc sc-zergling fa-fw"></i> Secondary</a>
+        </li>
+        {% endif %}
+        {% if checkAccess('uri_site_settings') or checkAccess('uri_manage_groups') %}
+        <li>
+            <a href="#"><i class="fa fa-wrench fa-fw"></i> {{ translate("MENU_CONFIGURATION") }}<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                {% if checkAccess('uri_site_settings') %}
+                <li>
+                    <a href="{{site.uri.public}}/config/settings"><i class="fa fa-globe fa-fw"></i> {{ translate("MENU_SITE_SETTINGS") }}</a>
+                </li>
+                {% endif %}
+                {% if checkAccess('uri_manage_groups') %}
+                <li>
+                    <a href="{{site.uri.public}}/groups"><i class="fa fa-tags fa-fw"></i> {{ translate("MENU_GROUPS") }}</a>
+                </li>
+                {% endif %}
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        {% endif %}
+
+
+ 
+            <li>
+                <a href="#"><i class="sc sc-zerg fa fa-fw"></i> My Projects <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" id="projectList">
+
+                </ul>
+            </li>
+
+
+
+
+
+            <li>
+
+                <a href="#"><i class="fa fa-wrench fa-fw"></i> My Circles <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level" id="circleList">
+
+                </ul>
+
+
+            </li>
+
+            <li>
+                <a href="#" id="createCircle"><i class="sc sc-zerg fa fa-fw"></i>Create Circle</a>
+            </li>
+
+            <li>
+                <a href="#" id="createProject"><i class="sc sc-zerg fa fa-fw"></i>Create Project</a>
+            </li>
+
+            <div id="dialog-create-project" >
+
+                <div class='panel-heading'>
+                    <h3 class='panel-title' style="font-size:30px;">Create Project</h3>
+                </div>
+
+                <div class="panel-body">
+                        <form name="createProject" id="createProjectForm" method="post" action="{{site.uri.public}}/projects/">
+
+                            <label style="margin-bottom: 10px"><strong>Title of the Project</strong></label>
+                            <input class="form-control" type="text" name="name" style="overflow: hidden; width: 100%;" autocomplete="off" required></input>
+                            <br>
+                            <label style="margin-bottom: 10px"><strong>Deadline</strong></label>
+                            <div class="checkbox checkbox-slider--b-flat checkbox-slider-md">
+                                <label>
+                                    <input id="deadline" type="checkbox" name="hasDeadline"><span><i>Click to toggle</i></span>
+                                </label>
+                            </div>
+                            <br>
+                            <div class="well well-sm hide" id="pickdate">
+                                <div style="overflow:hidden;">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div id="datetimepicker12"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <label style="margin-bottom: 10px"><strong>Type of project</strong></label>
+                            <br>
+                            <select id="typesProjects" name="type" style="width: 100%;">
+                                <option value="1">Private</option>
+                                <option value="2">Shared</option>
+                                <option value="3">Group</option>
+
+                            </select>
+                            <div id="optionalMembersProject" class="hide">
+                                <br>
+                                <select id="optionalMemberSelect" name="optionalMemberSelect[]" multiple="multiple" style="width: 100%">
+
+                                </select>
+                            </div>
+
+                            <div id="optionalGroupProject" class="hide">
+                                <br>
+                                <select id="groupsList" name="circle_id" style="width: 100%;">
+
+                                </select>
+                            </div>
+                        </form>
+                </div>
+
+                <div class="panel-dialog-footer">
+                    <button class="btn btn-default" id="createProjectClose">Cancel</button>
+                    <button class="btn btn-success" type="submit" form="createProjectForm">Create</button>
+                </div>
+
+            </div>
+
+            <div tabindex="1" id="dialog-create-circle" >
+
+                <div class='panel-heading'>
+                    <h3 class='panel-title' style="font-size:30px;">Create Circle</h3>
+                </div>
+
+                <div class="panel-body">
+
+                    <form name="createCircle" id="createCircleForm" method="post" action="{{site.uri.public}}/circles/">
+                        <label style="margin-bottom: 10px"><strong>Name of the Circle</strong></label>
+                        <input class="form-control" type="text" name="name" style="overflow: hidden; width: 100%;" autocomplete="off" required></input>
+                        <br>
+                        <div>
+                           <label style="margin-bottom: 10px"><strong>Add some members</strong></label>
+                          <select id="circleMemberSelect" name="circleMemberSelect[]" multiple="multiple" style="width: 100%" required>
+
+                          </select>
+                        </div>
+                        <br>
+                        <label style="margin-bottom: 10px"><strong>Select Privacy</strong></label>
+                        <br>
+                        <select id="typesPrivacy" name="type" style="width: 100%;">
+                            <option value="1">Open</option>
+                            <option value="2">Shared</option>
+                            <option value="3">Private</option>
+
+                        </select>
+
+                    </form>
+                   
+                </div>
+
+                <div class="panel-dialog-footer">
+                    <button class="btn btn-default" id="createCircleClose">Cancel</button>
+                    <button class="btn btn-success" type="submit" form="createCircleForm" >Create</button>
+                </div>
+
+            </div>
+
+
+        
+    </ul>
+</div>
+<!-- /.sidebar-collapse -->

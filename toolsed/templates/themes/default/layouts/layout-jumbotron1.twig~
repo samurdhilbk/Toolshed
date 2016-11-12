@@ -1,0 +1,38 @@
+{# This is the base layout template for "jumbotron" style pages (basically, all public (unauthenticated) pages). #}
+
+{# Default page properties.  You can override these in the `page` block of your child templates. #}
+{% set page = page | default({}) | merge({
+    "title"       : "New Jumbotron Page",
+    "description" : "This page has not yet been configured.",
+    "author"      : site.author,
+    "alerts"      : getAlerts()
+}) %}
+
+{% block page %}
+<!DOCTYPE html>
+<html lang="en">
+    {% block head %}
+   	<head>
+        <link href='http://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet'>
+    	<link href="http://s3.amazonaws.com/codecademy-content/courses/ltp2/css/bootstrap.min.css" rel="stylesheet">
+    	<link href="css/style.css" rel="stylesheet">
+    	</head>
+    {% endblock %}
+    <body>
+
+        {% block content %}{% endblock %}
+      </div>	
+    
+    {# This block is for dynamic fragments of code that lie outside of the main DOM #}
+    {% block fragments %}{% endblock %}
+    
+    
+    <script src="{{site.uri.js}}/config.js" ></script>
+    {% for item in includeJSBottom(page_group|default("common")) %}
+      <script src="{{item}}" ></script>
+    {% endfor %}
+    {# This block allows you to create page-specific Javascript in a child template #}
+    {% block page_scripts %}{% endblock %}    
+  </body>
+</html>
+{% endblock %}

@@ -1,0 +1,51 @@
+<div class="sidebar-nav navbar-collapse">
+    <ul class="nav" id="side-menu">
+
+
+        {% if checkAccess('uri_zerg') %}
+        <li>
+            <a href="{{site.uri.public}}/zerg"><i class="sc fa fa-fw"></i> Database Project Presentation</a>
+        </li>
+        {% endif %}
+        {% if checkAccess('uri_users') %}
+        <li>
+            <a href="{{site.uri.public}}/users"><i class="fa fa-fw"></i> Elect Report</a>
+        </li>
+        {% endif %}
+        {% if checkAccess('uri_group_users', { ('primary_group_id') : 4 }) %}
+        <li>
+            <a href="{{site.uri.public}}/users/zerglings"><i class="sc  fa fa-fw"></i> CO224 Project</a>
+        </li>
+        {% endif %}
+
+
+
+            <li>
+                <a href="{{site.uri.public}}/my_assignments"><i class="sc  fa fa-fw"></i>Maths Assignment</a>
+            </li>
+
+
+
+
+
+            <li>
+
+                <a href="#"><i class="fa fa-fw"></i> Numerical Methods Report</a>
+                <ul class="nav nav-second-level">
+
+                </ul>
+
+
+            </li>
+
+            <li>
+                <a href="{{site.uri.public}}/create_circle"><i class="sc fa fa-fw"></i>CO225 Assignment(Auction Server)</a>
+            </li>
+
+
+
+
+        
+    </ul>
+</div>
+<!-- /.sidebar-collapse -->

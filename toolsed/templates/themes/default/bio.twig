@@ -1,0 +1,265 @@
+{% extends "layouts/layout-dashboard.twig" %}
+{% set page_group = "dashboard" %}
+
+{# Set page properties (page.*) here. #}
+{% block page %}
+    {# By putting this in a special block, we ensure that it will be set AFTER the default values are set in the parent template, 
+    but BEFORE the page itself is rendered. #}    
+    {% set page = page | merge({
+        "title"       : "kdgf",
+        "description" : "Your bio."
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block page_styles %}
+	
+	<style>
+		.panel-title{
+			font-size:10px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-green">
+	<div class='panel-heading'>
+        <h3 class='panel-title' style="font-size:30px;">{{bio_user.user_name}} {{bio_user.display_name}}</h3>
+    </div>
+
+    <div class='panel-body'>
+        <div class="row">
+			<div class="col-sm-6">
+
+				<div class="editable">
+					<img id="frame" src="{{site.uri.image}}/profile/{{bio.photo}}?dummy=8484744" alt="Smiley face" height="300" width="300"/>
+					{% if (bio.user_id) == (user.id) %}
+						<a href="#" class="photo">edit</a>
+					{% endif %}
+				</div>
+
+				<div class="editbox hidden photo">
+					<form name="photo_upload" method="POST" enctype="multipart/form-data">
+				         <input type="file" name="file" id="file" required />
+				         <button type="submit">submit</button> 
+				    </form>
+				      <button class="photo">cancel</button></th>
+						
+				      
+				</div>
+				
+			</div>
+
+			<p id="console"></p>
+
+			<div class="col-sm-6">
+				<div class="editable">
+					<p><strong>Email</strong></p>
+					{% if (bio.user_id) == (user.id) %}
+						<a href="#">edit</a>
+					{% endif %}
+				</div>
+
+				<p >{{bio_user.email}}</p>
+
+				<div class="editable">
+					<p><strong>Birthday</strong></p>
+					{% if (bio.user_id) == (user.id) %}
+						<a href="#">edit</a>
+					{% endif %}
+				</div>
+				<p >{{bio_user.birthday|date("y/m/d")}}</p>
+
+				<div class="editable">
+					<p><strong>Current Occupation</strong></p>
+					{% if (bio.user_id) == (user.id) %}
+						<a href="#" class="curr_occupation">edit</a>
+					{% endif %}
+				</div>
+				<p class="curr_occupation">{{bio.curr_occupation}}</p>
+				<div class="editbox hidden curr_occupation">
+					<textarea  name="curr_occup" rows="1" cols="40"></textarea>
+					<tr>
+						<th><button class="curr_occupation">save</button></th>
+						<th><button class="curr_occupation">cancel</button></th>
+					</tr>
+				</div>
+				
+
+				<div class="editable">
+					<p><strong>Education</strong></p>
+					{% if (bio.user_id) == (user.id) %}
+						<a href="#" class="education">edit</a>
+					{% endif %}
+				</div>
+				<p class="education">{{bio.education}}</p>
+				<div class="editbox hidden education">
+					<textarea  name="educ" rows="1" cols="40"></textarea>
+					<tr>
+						<th><button class="education">save</button></th>
+						<th><button class="education">cancel</button></th>
+					</tr>
+				</div>
+				
+
+				<div class="editable">
+					<p><strong>Interests</strong></p>
+					{% if (bio.user_id) == (user.id) %}
+						<a href="#" class="interests">edit</a>
+					{% endif %}
+				</div>
+				<p class="interests">{{bio.interests}}</p>
+				<div class="editbox hidden interests">
+					<textarea  name="interests" rows="3" cols="40"></textarea>
+					<tr>
+						<th><button class="interests">save</button></th>
+						<th><button class="interests">cancel</button></th>
+					</tr>
+				</div>
+
+				<div>
+          <em>Into This</em>
+          <select id="countries">
+
+          	<option>Private</option>
+            <option>Shared</option>
+            <option>Group</option>
+
+          </select>
+        </div>
+				
+				
+
+			</div>
+
+		</div>
+    </div>
+
+
+</div>
+
+
+
+
+{% if (bio.user_id) == (user.id) %}
+
+
+{% else %}
+
+
+{% endif %}
+
+{% endblock %}
+
+
+
+
+{% block page_scripts %}
+<script src="{{site.uri.js}}/bio.js"></script>
+
+<script>
+	
+	
+
+	$(document).ready(function(){
+
+		$(".countries").select2();
+
+
+		$('.editable a').click(function(){
+			var cls=$(this).attr('class');
+			$('.editbox.'+cls).removeClass("hidden");
+			$('p.'+cls).addClass("hidden");
+			$('.editbox.'+cls+' textarea').val($('p.'+cls).text());
+		});
+
+		$('.editbox button').click(function(){
+			var cls=$(this).attr('class');
+			if($(this).text()==="cancel"){
+				$('.editbox.'+cls).addClass("hidden");
+				$('p.'+cls).removeClass("hidden");
+			} 
+			if($(this).text()==='save'){
+				
+				var cls=$(this).attr('class');
+
+				if(cls!=='photo'){
+					var val=$('.editbox.'+cls+' textarea').val();
+					$.ajax({
+					    'url': '{{site.uri.public}}/bio?id={{user.id}}&action=update', 
+					    'type': 'GET',
+					    'dataType': 'json', 
+					    'data': {column: cls, value:val}, 
+					    'success': function(data) {
+					    	$('.editbox.'+cls).addClass("hidden");
+							$('p.'+cls).removeClass("hidden");
+					    	
+					      	$('p.'+cls).text(data['newval']);				      	
+					    },
+					    'error': function(data) {
+					      // what happens if the request fails.
+					    }
+					 });
+				}
+				
+			}
+		});
+
+
+
+		$("form[name='photo_upload']").on('submit',(function(event) {
+
+			event.stopPropagation(); // Stop stuff happening
+    		event.preventDefault();
+			var location='{{site.uri.image}}/profile/{{bio.user_id}}';
+			var fd=new FormData(this);
+			fd.append('id',{{bio.user_id}});
+			fd.append('loc',location);
+			d = new Date();
+			$.ajax({
+				'url': '{{site.uri.public}}/bio?id={{user.id}}&action=update'	,
+				'type': "POST",
+				'data': fd,                
+				'cache': false,
+				'processData': false,
+				'contentType': false,
+				'success': function(data){
+					var new_loc='{{site.uri.image}}/profile/'+data+"?"+d.getTime();
+					$('#console').text(new_loc);
+					$('#frame').attr('src',new_loc);
+					$('.editbox.photo').addClass("hidden");
+				},
+				'error': function(data) {
+					$('#console').text(new_loc);
+			    	$('#frame').attr('src',new_loc);
+					$('.editbox.photo').addClass("hidden");
+			    },
+			    xhrFields: {
+			      // add listener to XMLHTTPRequest object directly for progress (jquery doesn't have this yet)
+			      onprogress: function (progress) {
+			        // calculate upload progress
+			        var percentage = Math.floor((progress.total / progress.totalSize) * 100);
+			        // log upload progress to console
+			        console.log('progress', percentage);
+			        if (percentage === 100) {
+			          console.log('DONE!');
+			        }
+			      }
+			    }
+			});
+		}));
+
+
+
+
+		
+
+	});
+
+
+</script>
+
+{% endblock %}
+

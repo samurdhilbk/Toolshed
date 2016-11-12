@@ -1,0 +1,611 @@
+{# This is the base layout template for "dashboard" style pages (basically, all authenticated pages). #}
+
+{# Default page properties.  You can override these in your child templates. #}
+{% set page = page | default({}) | merge({
+    "title"       : "New Dashboard Page",
+    "description" : "This page has not yet been configured.",
+    "author"      : site.author,
+    "alerts"      : getAlerts()
+}) %}
+
+{% block page %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+    {% block head %}
+    <head>
+
+        {% block page_styles %}
+
+        {% endblock %} 
+
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="{{page.description}}">
+        <meta name="author" content="{{site.author}}">
+        <meta name="{{csrf_key}}" content="{{csrf_token}}"> 
+        
+        <title>{{site.site_title}} | {{page.title}}</title>
+        
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="{{site.uri.favicon}}" />
+
+        
+        <!-- Page stylesheets -->
+        {% for item in includeCSS(page_group|default("common")) %}
+          <link rel="stylesheet" href="{{item}}" type="text/css" >
+        {% endfor %}
+        
+        <!-- Theme stylesheet -->
+        <link rel="stylesheet" href="{{site.uri.css}}/theme.css?user={{user.id}}" type="text/css" >
+        
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        
+        <!-- Header javascript (not recommended) -->
+        {% for item in includeJSTop(page_group|default("common")) %}
+          <script src="{{item}}" ></script>
+        {% endfor %}  
+
+
+
+        
+        
+    </head>
+    {% endblock %}
+    
+    <body>
+
+
+
+
+        <div id="wrapper">
+
+
+
+
+            {% include 'components/dashboard/nav-account.twig' %}
+
+
+
+            <div id="page-wrapper">
+                {% include 'components/common/alerts.twig' %}
+                <!--
+                <div class="container">
+                    <div class="row">
+                            <div class="col-sm-4 col-md-4 col-md-offset-4">
+              
+                                    
+                                    <div class="panel-heading">
+                                        <div class="input-group">
+                                            <input type="hidden" name="search_param" value="name" id="search_param">
+                                            <input id="searchText"type="text" class="form-control" autocomplete="off" name="q" placeholder="Search Toolshed" id="search_key" value="">
+
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+
+                                       
+                                    <ul id="autolist" class="list-group">
+                                        <div id="autocompleteTest">
+
+
+                                        </div>
+
+                                        
+                                    </ul>
+
+                                    </div>
+
+                                    
+
+                            </div>
+                    </div>
+                </div>
+                -->
+                {% block content %}
+
+                {% endblock %}
+                
+                <footer>
+                  <div class="navbar navbar-fixed-bottom">
+
+
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <div class="foot">
+              
+                            <a href="{{site.uri.public}}/about">About</a>
+                   
+                            <a href="{{site.uri.public}}/about">FAQ</a>
+                       
+                 
+                            <a href="{{site.uri.public}}/about">Contact Us</a>
+
+                        
+                            <a href="{{site.uri.public}}/about">Terms</a>
+                     
+
+         
+                            <a href="{{site.uri.public}}/about">Privacy</a>
+              
+                            </div>
+                        </div>       
+                    </div>
+
+                    
+
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            &copy; <a href="{{site.uri.public}}">{{site.site_title}}</a>, {{ "now"|date("Y") }}
+                        </div>       
+                    </div>
+                  </div>
+                </footer>
+            </div>
+            <!-- /#page-wrapper -->
+
+
+
+
+
+
+        </div>
+        <!-- /#wrapper -->
+
+            
+        
+        {# This block is for dynamic fragments of code that lie outside of the main DOM #}
+        {% block fragments %}{% endblock %}
+
+            {# This block allows you to create page-specific Javascript in a child template #}
+              
+        
+        <script src="{{site.uri.js}}/config.js" ></script>
+
+        {% for item in includeJSBottom(page_group|default("common")) %}
+          <script src="{{item}}" ></script>
+        {% endfor %}
+
+
+        
+
+        <script>
+
+
+
+            $(document).ready(function () {
+
+
+
+               if ($.ui && $.ui.dialog && $.ui.dialog.prototype._allowInteraction) {
+                    var ui_dialog_interaction = $.ui.dialog.prototype._allowInteraction;
+                    $.ui.dialog.prototype._allowInteraction = function(e) {
+                        if ($(e.target).closest('.select2-dropdown').length) return true;
+                        return ui_dialog_interaction.apply(this, arguments);
+                    };
+                }
+
+                
+                var publicUserList=[];// array(actually map) with id=>{label: "Full Name", photo: "profile_photo_url"}
+                var searchUserList=[];
+                var publicCircleList=[];// array(actually map) with id=>{label: "Name", photo: "circle_photo_url"}
+                var searchCircleList=[];
+                var publicProjectList=[];// array(actually map) with id=>{label: "Name", photo: "project_photo_url"}
+                var searchProjectList=[];
+
+
+                var userPartnerList=[];
+                var userCircleList=[];
+                var userProjectList=[];
+
+
+
+                $.when(
+
+                    //AJAX_0
+                    $.ajax({
+                        url: '{{site.uri.public}}/getPublicUserList', 
+                        type: 'GET', 
+                        dataType: 'json', 
+                        data: {}, 
+                        
+                        success: function(data) {
+                            publicUserList=data;                                              
+                        },
+                        error: function(data) {  
+                        }
+                     })
+
+                    ,
+
+                    //AJAX_1
+                    $.ajax({
+                        'url': '{{site.uri.public}}/getPublicCircleList', 
+                        'type': 'GET', 
+                        'dataType': 'json', 
+                        'data': {}, 
+                        'success': function(data) {
+                            publicCircleList=data;                     
+                        },
+                        'error': function(data) {  
+                        }
+                     })
+
+                    ,
+
+                    
+                    //AJAX_2
+                    $.ajax({
+                        'url': '{{site.uri.public}}/getPublicProjectList', 
+                        'type': 'GET', 
+                        'dataType': 'json', 
+                        'data': {}, 
+                        'success': function(data) {
+                            //console.log(data);
+                            publicProjectList=data;                         
+                        },
+                        'error': function(data) {  
+                        }
+                     }),
+                    
+                    
+
+                    //AJAX_3
+                    $.ajax({
+                        'url': '{{site.uri.public}}/getUserCircleList/?id={{user.id}}', 
+                        'type': 'GET', 
+                        'dataType': 'json', 
+                        'data': {}, 
+                        'success': function(data) {
+                            //console.log(data);
+                            userCircleList=data;                     
+                        },
+                        'error': function(data) {  
+                        }
+                     }),
+
+                    //AJAX_4
+                    $.ajax({
+                        'url': '{{site.uri.public}}/getUserProjectList/?id={{user.id}}', 
+                        'type': 'GET', 
+                        'dataType': 'json', 
+                        'data': {}, 
+                        'success': function(data) {
+                            //console.log(data);
+                            userProjectList=data;                     
+                        },
+                        'error': function(data) {  
+                        }
+                     })
+
+                ).then(function(){
+
+                    for (var key in publicUserList) {
+                        var val = publicUserList[key];
+                        searchUserList.push({label: val["label"], value: key, tag: "Person", link: "bio", photo: val["photo"]});
+                    }
+
+                    
+                    for (var key in publicCircleList) {
+                        var val = publicCircleList[key];
+                        searchCircleList.push({label: val["label"], value: key, tag: "Circle", link: "circles", photo: val["photo"]});
+                    }
+
+                    
+                    for (var key in publicProjectList) {
+                        var val = publicProjectList[key];
+                        searchProjectList.push({label: val["label"], value: key, tag: "Project", link: "projects", photo: val["photo"]});
+                    }
+
+
+                    
+                    var searchList = searchUserList.concat(searchCircleList).concat(searchProjectList);
+                    
+                    console.log(searchList);
+
+                    var i=0;
+                    var availableMembers=[];
+                    var availableCircles=[];
+
+                    for(i=0;i<searchUserList.length;i++){
+                        if(searchUserList[i]["value"]!={{user.id}}){
+                            availableMembers.push({ id: searchUserList[i]["value"], text: searchUserList[i]["label"] });
+                        }
+                    }
+
+                    for (var key in userCircleList) {
+                        var val = userCircleList[key];
+                        availableCircles.push({ id: key, text: val["label"] });
+                        $("#circleList").append("<li class='list-group-item'> <a href='{{site.uri.public}}/circle?id="+key+"&action=display'> <div class='row'> <div class='col-md-12'> <div class='media-left media-middle'> <img class='media-object img-circle' src='{{site.uri.image}}/project/photo/"+val["photo"]+"' height='25' width='25'/> </div> <div id='center'>" + val["label"] + " </div> </div> </div> </a> </li>");
+                    }
+
+                    for(var key in userProjectList){
+                        var val= userProjectList[key];
+                        $("#projectList").append("<li class='list-group-item'> <a href='{{site.uri.public}}/project?id="+key+"&action=display'> <div class='row'> <div class='col-md-12'> <div class='media-left media-middle'> <img class='media-object img-circle' src='{{site.uri.image}}/project/photo/"+val["photo"]+"' height='25' width='25'/> </div> <div id='center'>" + val["label"] + " </div> </div> </div> </a> </li>");
+                    }
+
+                    
+
+
+                    $("#searchText").on( "trigger", function () {
+                        if ($( "#searchText" ).val()==''){
+                            $('#autocompleteTest').empty();
+                        }
+                        return false;
+                    } );
+                    $("#autocompleteTest").empty();
+      
+
+                    $('#searchText').autocomplete({
+                        search: function(event, ui) {
+                            $('#autocompleteTest').empty();
+                        },
+                        close:function(){
+                            if ($('#searchText').val()==''){
+                                $('#autocompleteTest').empty();
+                            }
+                        },
+                        minLength: 1,
+                        source: function(request, response) {
+                            var results = $.ui.autocomplete.filter(searchList, request.term);
+                            console.log(results);
+
+                            response(results.slice(0,5));//for getting 5 results
+                        }
+                    }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                        return $('<div/>')
+                            .data('ui-autocomplete-item', item)
+                            .append("<li class='list-group-item'> <a href='{{site.uri.public}}/"+item.link+"?id="+item.value+"&action=display'> <div class='row'> <div class='col-md-12'> <div class='media-left media-middle'> <img class='media-object img-circle' src='{{site.uri.image}}/profile/"+item.photo+"' height='50' width='50'/> </div> <div id='center'>" + item.label + "<br>"+item.tag+" </div> </div> </div> </a> </li>")
+                            .appendTo($('#autocompleteTest'));
+                    };
+
+
+
+
+                    $( "#dialog-create-circle" ).dialog({ autoOpen: false });
+
+                    $( "#dialog-create-project" ).dialog({ autoOpen: false });
+
+                    $('#datetimepicker12').datetimepicker({
+                        inline: true,
+                        sideBySide: true
+                    });
+
+                    $("#typesProjects").select2({
+                        minimumResultsForSearch: -1
+                    });
+
+                    $("#countries").select2();
+
+                    $("#typesPrivacy").select2({
+                        minimumResultsForSearch: -1
+                    });
+                    
+
+                    $( "#dialog-create-circle" ).dialog({
+
+                      modal: true,
+                      dialogClass: "no-close",  
+                      classes: {
+                        "ui-dialog": "panel-green",
+                        "ui-dialog-titlebar": "hide",
+                        "ui-dialog-content":"panel-body",
+                        "ui-dialog-buttonpane":"panel-dialog-footer"
+                      },
+                      resizable: false,
+                      draggable: false,
+                      width: 800,
+                      maxHeight:1000,
+                      height: 'auto',
+                      position: { my: "top-400",of:window,collision:"fit"}
+                    });
+
+
+                    $( "#dialog-create-project" ).dialog({
+
+                      modal: true,
+                      dialogClass: "no-close",  
+                      classes: {
+                        "ui-dialog": "panel-green",
+                        "ui-dialog-titlebar": "hide",
+                        "ui-dialog-content":"panel-body",
+                        "ui-dialog-buttonpane":"panel-dialog-footer"
+                      },
+                      resizable: false,
+                      draggable: false,
+                      width: 800,
+                      maxHeight:800,
+                      height: 'auto',
+                      position: { my: "top-400",of:window,collision:"fit"}
+                    });
+
+                    $( "#createProject" ).click(function() {
+                          $( "#dialog-create-project" ).dialog( "open" );
+                    });
+
+
+                    function matchStart (term, text) {
+                        var arr=text.split(" ");
+                        var i;
+                        for(i=0;i<arr.length;i++){
+                            if (arr[i].toUpperCase().indexOf(term.toUpperCase()) == 0) {
+                               return true;
+                            }
+                        }
+                      
+
+                      return false;
+                    }
+
+                    $( "#createCircle" ).click(function() {
+
+                          $( "#dialog-create-circle").dialog( "open" );
+                          $("form[name='createCircle']>input").val("");
+
+
+                          $.fn.select2.amd.require(['select2/compat/matcher'], function (oldMatcher) {
+                              $("#circleMemberSelect").select2({
+                                placeholder:"Enter the names of the people who you want to add to this circle",
+                                minimumInputLength:1,
+                                data: availableMembers,
+                                matcher: oldMatcher(matchStart)
+                              })
+                            });
+
+                          $("#circleMemberSelect").val("").trigger("change");
+                    });
+
+                    $( "#createCircleClose" ).click(function() {
+                        $("#circleMemberSelect").select2("destroy");
+
+
+                        $( "#dialog-create-circle" ).dialog( "close" );
+                    });
+
+                    $( "#createProjectClose" ).click(function() {
+
+                        $( "#dialog-create-project" ).dialog( "close" );    
+                    });
+
+                    $(".list-group-item").hover(function () {
+                        $(this,".list-group-item").css('background-color','rgba(1, 172, 172, 0.11)');
+
+                    },function () {
+                        $(this,".list-group-item").css('background-color','white');
+                    });
+
+                    $("#typesProjects").change(function(){
+
+                        var selectedText=$("#typesProjects option:selected" ).text();
+
+                        if(selectedText==='Shared'){
+                            $("#optionalMembersProject").removeClass("hide");
+                            $("#optionalGroupProject").addClass("hide");
+                            $.fn.select2.amd.require(['select2/compat/matcher'], function (oldMatcher) {
+                              $("#optionalMemberSelect").select2({
+                                placeholder:"Enter the names of the people who you want to share this project with",
+                                minimumInputLength:1,
+                                data: availableMembers,
+                                matcher: oldMatcher(matchStart)
+                              })
+                            });
+
+                          $("#optionalMemberSelect").val("").trigger("change");
+                        }
+                        else if(selectedText==='Group'){
+                            $("#optionalMembersProject").addClass("hide");
+                            $("#optionalGroupProject").removeClass("hide");
+                            $.fn.select2.amd.require(['select2/compat/matcher'], function (oldMatcher) {
+                              $("#groupsList").select2({
+                                placeholder:"Enter the name of the group you want to add this project to",
+                                matcher: oldMatcher(matchStart),
+                                data: availableCircles
+                              })
+                            });
+                        }
+                        else{
+                            $("#optionalMembersProject").addClass("hide");
+                            $("#optionalGroupProject").addClass("hide");
+                        }
+                    });
+
+                    $("#deadline").change(function() {
+                        if(this.checked) {
+                            $("#pickdate").removeClass("hide");
+                        }
+                        else{
+                            $("#pickdate").addClass("hide");
+                        }
+                    });
+
+
+
+                    $('#createProjectForm').submit(function () {
+                        var selectedTime=$('#datetimepicker12').data("DateTimePicker").date().format("YYYY-MM-DD HH:mm:ss");
+                        console.log(selectedTime);
+                        var params=[{name: "deadline", value: selectedTime}];
+                        $(this).append($.map(params, function (param) {
+                            return   $('<input>', {
+                                type: 'hidden',
+                                name: param.name,
+                                value: param.value
+                            })
+                        }))
+                    });
+                    
+
+                    
+
+                    
+
+                    $.ui.autocomplete.filter = function (array, term) {
+                        var matcher = new RegExp('(^| )' + $.ui.autocomplete.escapeRegex(term), 'i');
+                        return $.grep(array, function (value) {
+                            return matcher.test(value.label || value.value || value);
+                        });
+                    };
+
+                });
+
+                /*
+                function setAfterAJAX_0(data){
+                    
+                    var i;
+                    for (var key in publicUserList) {
+                        var val = publicUserList[key];
+                        searchUserList.push({label: val["label"], value: key});
+                    }
+                }
+
+                
+
+                function setAfterAJAX_1(data){
+                    availableTags=data[0]; 
+                    mapp=data[1];
+                }
+
+                
+
+                function setAfterAJAX_2(data){
+                    availableTags=data[0]; 
+                    mapp=data[1];
+                }
+                */
+
+                        
+                        //$('#console1').text(mapp[availableTags[0]][1]);
+                        //$('#console1').text(availableTags[0]);    
+
+                
+                
+                
+                
+
+                
+
+                
+            });
+        </script>
+
+       
+        
+        {% block page_scripts %}
+
+        {% endblock %} 
+         
+    </body>  
+</html>
+{% endblock %}
+
+
+

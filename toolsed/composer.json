@@ -1,0 +1,56 @@
+{
+    "name": "samurdhilbk/ToolsEd",
+    "type": "project",
+    "description": "",
+    "keywords": ["php user management", "usercake"],
+    "homepage": "https://www.toolsed.com",
+    "license" : "MIT",
+    "authors" : [
+        {
+            "name": "Samurdhi Karunarathne"
+        }
+    ],
+    "require": {
+        "php" : ">=5.4.0",
+        "twig/twig" : "~1.0",
+        "slim/slim" : "2.*",
+        "slim/views" : "0.1.3",
+        "illuminate/database" : "5.0.33",
+        "nikic/php-parser" : "~1",
+        "alexweissman/fortress" : "0.2.0.x-dev",
+        "phpmailer/phpmailer" : "5.2.10",
+        "birke/rememberme" : "1.0.4",
+        "wikimedia/composer-merge-plugin": "1.*",
+        "robloach/component-installer": "*",
+        "components/bootstrap" : ">=2.0, <4.0",
+        "components/jquery": ">=1.7.1, <4.0.0"
+    },
+    "extra": {
+        "merge-plugin": {
+            "include": [
+                "plugins/*/composer.json"
+            ],
+            "recurse": true,
+            "replace": false,
+            "merge-dev": true,
+            "merge-extra": false
+        },
+        "component": {
+            "scripts": [
+                "js/bootstrap-datepicker.js"
+            ],
+            "styles": [
+                "dist/css/bootstrap-datepicker.css",
+                "dist/css/bootstrap-datepicker3.css"
+            ],
+            "files": [
+                "js/locales/bootstrap-datepicker.*.js"
+            ]
+        }
+    },
+    "autoload": {
+        "classmap" : [
+            "controllers", "middleware", "models", "plugins"
+        ]
+    }
+}

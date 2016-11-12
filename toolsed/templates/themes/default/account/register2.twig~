@@ -1,0 +1,223 @@
+{% extends "layouts/layout-jumbotron.twig" %}
+{% set page_group = "loggedout" %}
+
+{% block page %}
+    {# By putting this in a special block, we ensure that it will be set AFTER the default values are set in the parent template, 
+    but BEFORE the page itself is rendered. #}
+    
+    {% set page = page | merge({
+        "title"       : "Register",
+        "description" : "Register for a new UserFrosting account.",
+        "active_page" : "account/register"
+    }) %}    
+
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+					        <div class="sign-in-opt">
+					        	<div class="btn btn-close"><span class="icon"></span><span></span></div>
+					        	 <input class="form-control email-box2"  placeholder="Email" style="overflow:hidden"     >
+          						 <input class="form-control pwd-box" type="password" placeholder="Password"  style="overflow:hidden" >
+          						 <a href="#" class="btn btn-primary login"><span>Log In</span></a>
+					        </div>
+					        <div class="header1">
+					          <a href="#" class="btn btn-primary btn-sign-in">Sign In</a>
+					        </div>
+					        <div class="btn btn-primary btn-back">
+					        </div>
+					        <div class="title1">
+					<h1>ToolsEd</h1>
+				<p>Your Toolshed for Education</p>
+			</div>
+			
+				<form class="form-group" name="register" method="post" action="{{site.uri.public}}/account/register">
+				
+          <input class="form-control first-box" type="text" rows="2" placeholder="First Name" name="user_name" style="overflow:hidden" value=""></input>
+          <input class="form-control last-box" type="text" rows="2" placeholder="Last Name"  name="display_name" style="overflow:hidden" value=""></input>
+          <input class="form-control email-box" type="text" rows="2" placeholder="E-mail" name="email" style="overflow:hidden" value=""></input>
+          <input class="form-control password-box" rows="2" placeholder="Password" name="password" type="password" style="overflow:hidden" value=""></input>
+          <input class="form-control password-box-c" rows="2" placeholder="Re-type Password" name="passwordc" type="password" style="overflow:hidden" value=""></input>
+            	
+            		<button class="btn btn-success sign-up"  type="submit" name="btn_register" >Sign Up</button>
+        </form>
+                    <div class="join-with col-md-12">
+                        <a href="#" class="btn btn-primary btn-fb">Join with Facebook
+				<img id="fb-png" src="http://localhost:85/home/public/images/facebook.png" style="border: 0; float: left; margin-right: -30px" />
+			</a>
+                        <div class="divider"/>
+                        <a href="#" class="btn btn-primary btn-g">Join with Google+
+				<img id="gp-png" src="http://localhost:85/home/public/images/google-plus.png" style="border: 0; float: left; margin-right: -35px" />
+			</a>
+                    </div>
+
+                    <div class="btn btn-primary btn-learn footer">
+					          <p>What's ToolsEd? Find out here!</p>
+					        </div>
+	</div>
+
+
+    <div class="slider">
+
+      <div class="slide active-slide" id="slide1" style="background-color:#059603">
+        <div class="container">
+          <div class="row">
+            <div class="slide-copy col-xs-12">
+              <h1>Learning is fun. Unless you don't manage it.</h1>
+              <p>ToolsEd is the one stop platform to manage your academics. It provides some neat tools and functionalities that will make sure you will not miss a single deadline. And that you do your best on assignments. Everytime.</p>    
+            </div>
+          </div>
+        </div>      
+      </div>
+
+      <div class="slide" id="slide2" style="background-color:#da255e">
+        <div class="container">
+          <div class="row">
+            <div class="slide-copy col-xs-12">
+              <h1>Feel like collaborating? Welcome ToolsEd Groups.</h1>
+              <p>Learning is fun. Especially when you do it together. Share notices with your peers. Get your assignments reviewed by your classmates before submitting. Or simply get help when you're stuck. Give and you will receive.</p>    
+            </div>
+          </div>
+        </div>      
+      </div> 
+
+      <div class="slide" id="slide3" style="background-color:#014a98">
+        <div class="container">
+          <div class="row">
+            <div class="slide-copy col-xs-12">
+              <h1>Always miss notices? You won't with ToolsEd. Ever.</h1>
+              <p>Sync your academic Email. Snap a photo of a notice and upload. ToolsEd will analyze them and provide you with all the notifications you need, when you need it.</p>
+             <p>Never wonder whether ToolsEd is intelligent. It is.</p> 
+            </div>
+          </div>
+        </div>      
+      </div> 
+
+
+      <div class="slide" id="slide4" style="background-color:#7138c7">
+        <div class="container">
+          <div class="row">
+            <div class="slide-copy col-xs-12">
+              <h1>Need a hand managing assignments? Let ToolsEd lend it for you.</h1>
+              <p>Put up assignments, set-up deadlines, create a draft and build it through to completion. It's a process. It rarely isn't.</p>
+            </div>
+          </div>
+        </div>      
+      </div> 
+
+    </div>
+	    <div data-spy="affix" data-offset-top="100" id="dotNav" >
+			<ul>
+		      <li class="dott active"><a href="#slide1"></a></li>
+		      <li class="dott"><a href="#slide2"></a></li>
+		      <li class="dott"><a href="#slide3"></a></li>
+		      <li class="dott"><a href="#slide4"></a></li>
+		     </ul>
+		</div>	
+{% endblock %}
+
+{% block fragments %}
+    <div id="tos" class="modal fade" tabindex="-1" data-width="760" style="display: none;">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title">Terms and Conditions for {{site.site_title}}</h4>
+        </div>
+        <div class="modal-body">
+            {% include 'components/common/tos.twig' %}	
+        </div>
+        <div class="modal-footer">
+            <button type="button" data-dismiss="modal" class="btn btn-primary">Got it!</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_scripts %} 
+    <script>
+        $(document).ready(function() {           
+            // Process form 
+            ufFormSubmit(
+                $("form[name='register']"),
+                {
+    "rules": {
+        "user_name": {
+            "rangelength": [
+                1,
+                50
+            ],
+            "noLeadingWhitespace": true,
+            "noTrailingWhitespace": true,
+            "required": true
+        },
+        "display_name": {
+            "rangelength": [
+                1,
+                50
+            ],
+            "required": true
+        },
+        "email": {
+            "required": true,
+            "rangelength": [
+                1,
+                150
+            ],
+            "email": true
+        },
+        "password": {
+            "required": true,
+            "rangelength": [
+                8,
+                50
+            ]
+        },
+        "passwordc": {
+            "required": true,
+            "matchFormField": "password",
+            "rangelength": [
+                8,
+                50
+            ]
+        },
+        "captcha": []
+    },
+    "messages": {
+        "user_name": {
+            "rangelength": "Your username must be between 1 and 50 characters in length.",
+            "noLeadingWhitespace": "Username cannot begin with whitespace",
+            "noTrailingWhitespace": "Username cannot end with whitespace",
+            "required": "Please enter your user name."
+        },
+        "display_name": {
+            "rangelength": "Your display name must be between 1 and 50 characters in length.",
+            "required": "Please enter your display name."
+        },
+        "email": {
+            "required": "Please enter your email address.",
+            "rangelength": "Email must be between 1 and 150 characters in length.",
+            "email": "Invalid email address"
+        },
+        "password": {
+            "required": "Please enter your password.",
+            "rangelength": "Your password must be between 8 and 50 characters in length."
+        },
+        "passwordc": {
+            "required": "Please enter your password.",
+            "matchFormField": "Your password and confirmation password must match",
+            "rangelength": "Your password must be between 8 and 50 characters in length."
+        }
+    }
+},
+                $("#userfrosting-alerts"),
+                function(data, statusText, jqXHR) {
+                    // Forward to login page on success
+                    window.location.replace(site['uri']['public'] + "/account/login");
+                }
+            );
+        });    
+               
+        
+    </script>
+    <script src="js/jquery-2.2.0.min.js"></script>
+    <script src="js/app.js"></script>
+{% endblock %}
