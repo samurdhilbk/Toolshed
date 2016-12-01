@@ -412,6 +412,14 @@ class AccountController extends \ToolsEd\BaseController {
         // Store new user to database
         $user->save();
 
+        $user_bio = new UserBio;
+
+        $user_bio->user_id = $user->id;
+
+        
+
+        $user_bio->save();
+
         if ($this->_app->site->require_activation) {
             // Create verification request event
             $user->newEventVerificationRequest();

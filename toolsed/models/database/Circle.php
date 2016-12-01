@@ -35,7 +35,7 @@ class Circle extends TEModel {
      */ 
     public function users(){
         $link_table = Database::getSchemaTable('circle_user')->name;
-        return $this->belongsToMany('ToolsEd\User', $link_table);
+        return $this->belongsToMany('ToolsEd\User', $link_table)->withPivot('admin','creator');
     }
 
     public function projects(){

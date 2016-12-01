@@ -1,0 +1,111 @@
+{% extends "layouts/layout-dashboard.twig" %}
+{% set page_group = "dashboard" %}
+
+{# Set page properties (page.*) here. #}
+{% block page %}
+    {# By putting this in a special block, we ensure that it will be set AFTER the default values are set in the parent template, 
+    but BEFORE the page itself is rendered. #}    
+    {% set page = page | merge({
+        "title"       : "circle",
+        "description" : "Circle."
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block page_styles %}
+	
+	<style>
+		.panel-title{
+			font-size:10px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block content %}
+
+<h1>{{circle.name}}</h1>
+
+{% if type == '1' %}
+
+	<p>Hello Member</p>
+
+{% elseif type == '2' %}
+
+	<p>Hello Admin</p>
+
+{% else %}
+
+	<p>Hello Guest</p>
+
+{% endif %}
+
+{% endblock %}
+
+
+
+
+{% block page_scripts %}
+<script src="{{site.uri.js}}/bio.js"></script>
+
+<script>
+	
+	/*
+
+	$(document).ready(function(){
+
+
+        var circleUserList=[];
+        var circleProjectList=[];
+
+
+		$.when(
+
+			//AJAX_
+			$.ajax({
+                'url': '{{site.uri.public}}/getCircleUserList/?id={{circle.id}}', 
+                'type': 'GET', 
+                'dataType': 'json', 
+                'data': {}, 
+                'success': function(data) {
+                    //console.log(data);
+                    circleUserList=data;                     
+                },
+                'error': function(data) {  
+                }
+            })
+
+			,
+
+			//AJAX_1
+			$.ajax({
+                'url': '{{site.uri.public}}/getCircleProjectList/?id={{circle.id}}', 
+                'type': 'GET', 
+                'dataType': 'json', 
+                'data': {}, 
+                'success': function(data) {
+                    //console.log(data);
+                    circleProjectList=data;                     
+                },
+                'error': function(data) {  
+                }
+
+            })
+
+
+		).then( function(){
+
+
+
+		});
+
+		
+
+	});
+	
+	*/
+
+</script>
+
+{% endblock %}
+

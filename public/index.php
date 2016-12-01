@@ -83,7 +83,7 @@
 
             $controller->updateUserBio($get['id'],$get['column'],$get['value']);
             $ret=$controller->getUserBio($get['id'],$get['column']);
-            error_log($ret);
+            //error_log($ret);
             echo json_encode(array('newval' => $ret));
         }
         
@@ -110,7 +110,7 @@
                 $controller = new TE\UserController($app);
                 $controller->updateUserPhoto($id, $file, $loc);
                 $ret=$controller->getUserBio($id, 'photo');
-                error_log($ret);
+                //error_log($ret);
                 $data=array('photo_loc' => $ret);
                 echo $ret;
                 
@@ -130,6 +130,7 @@
     
     $app->get('/getPublicCircleList/?', function() use ($app) {    
         
+        error_log("hereeeeeeeeeeeeee");
         $controller = new TE\CircleController($app);
         $ret=$controller->getPublicCircleList();
         echo json_encode($ret);      
@@ -282,11 +283,15 @@
     });       
 
     // Create user
+    
     $app->post('/users/?', function () use ($app) {
+
         $controller = new TE\UserController($app);
         return $controller->createUser();
     });
     
+    
+
     // Update user info
     $app->post('/users/u/:user_id/?', function ($user_id) use ($app) {
         $controller = new TE\UserController($app);
@@ -389,6 +394,28 @@
         $controller = new TE\CircleController($app);
         $controller->createCircle($app->user->id);
         $app->render('dashboard.twig', []); 
+    });
+
+
+
+    $app->get('/circle/?', function () use ($app) {    
+        // Access-controlled page
+        if (!$app->user->checkAccess('uri_dashboard')){
+            $app->notFound();
+        }
+
+        $get = $app->request->get();
+        $controller = new TE\CircleController($app);
+
+        if($get['action'] == 'display'){
+            
+            $ret = $controller->pageCircle($get['id'], $app->user->id);
+
+            if(!$ret) $app->notFound();
+        }
+
+        
+              
     });
 
     /*********** PROJECT MANAGEMENT INTERFACE ********************************/

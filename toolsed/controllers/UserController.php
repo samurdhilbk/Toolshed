@@ -241,7 +241,7 @@ class UserController extends \ToolsEd\BaseController {
         $ret=array();
 
         foreach($circles as $circle){
-            error_log($circle->id);
+            //error_log($circle->id);
             $ret[$circle->id]=array("label"=>($circle->name),"photo"=>($circle->photo));
         }
 
@@ -261,7 +261,7 @@ class UserController extends \ToolsEd\BaseController {
         $ret=array();
 
         foreach($projects as $project){
-            error_log($project->id);
+            //error_log($project->id);
             $ret[$project->id]=array("label"=>($project->name),"photo"=>($project->photo));
         }
 
@@ -519,6 +519,9 @@ class UserController extends \ToolsEd\BaseController {
      * @see formUserCreate
      */
     public function createUser(){
+
+        error_log("User created");
+
         $post = $this->_app->request->post();
 
         // Load the request schema

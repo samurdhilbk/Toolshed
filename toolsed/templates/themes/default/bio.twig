@@ -30,11 +30,16 @@
     </div>
 
     <div class='panel-body'>
+
+
         <div class="row">
 			<div class="col-sm-6">
 
 				<div class="editable">
 					<img id="frame" src="{{site.uri.image}}/profile/{{bio.photo}}?dummy=8484744" alt="Smiley face" height="300" width="300"/>
+
+
+
 					{% if (bio.user_id) == (user.id) %}
 						<a href="#" class="photo">edit</a>
 					{% endif %}
@@ -119,18 +124,7 @@
 					</tr>
 				</div>
 
-				<div>
-          <em>Into This</em>
-          <select id="countries">
-
-          	<option>Private</option>
-            <option>Shared</option>
-            <option>Group</option>
-
-          </select>
-        </div>
-				
-				
+	
 
 			</div>
 
@@ -157,15 +151,16 @@
 
 
 {% block page_scripts %}
+<!--
 <script src="{{site.uri.js}}/bio.js"></script>
+
+-->
 
 <script>
 	
 	
 
 	$(document).ready(function(){
-
-		$(".countries").select2();
 
 
 		$('.editable a').click(function(){
@@ -219,7 +214,7 @@
 			fd.append('loc',location);
 			d = new Date();
 			$.ajax({
-				'url': '{{site.uri.public}}/bio?id={{user.id}}&action=update'	,
+				'url': '{{site.uri.public}}/bio?id={{user.id}}&action=update',
 				'type': "POST",
 				'data': fd,                
 				'cache': false,

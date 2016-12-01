@@ -298,13 +298,13 @@
                     
                     for (var key in publicCircleList) {
                         var val = publicCircleList[key];
-                        searchCircleList.push({label: val["label"], value: key, tag: "Circle", link: "circles", photo: val["photo"]});
+                        searchCircleList.push({label: val["label"], value: key, tag: "Circle", link: "circle", photo: val["photo"]});
                     }
 
                     
                     for (var key in publicProjectList) {
                         var val = publicProjectList[key];
-                        searchProjectList.push({label: val["label"], value: key, tag: "Project", link: "projects", photo: val["photo"]});
+                        searchProjectList.push({label: val["label"], value: key, tag: "Project", link: "project", photo: val["photo"]});
                     }
 
 
@@ -333,8 +333,6 @@
                         var val= userProjectList[key];
                         $("#projectList").append("<li class='list-group-item'> <a href='{{site.uri.public}}/project?id="+key+"&action=display'> <div class='row'> <div class='col-md-12'> <div class='media-left media-middle'> <img class='media-object img-circle' src='{{site.uri.image}}/project/photo/"+val["photo"]+"' height='25' width='25'/> </div> <div id='center'>" + val["label"] + " </div> </div> </div> </a> </li>");
                     }
-
-                    
 
 
                     $("#searchText").on( "trigger", function () {

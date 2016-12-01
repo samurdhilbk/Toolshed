@@ -30,17 +30,47 @@ class CircleController extends \ToolsEd\BaseController {
      * Request type: GET
      * @todo implement interface to modify authorization hooks and permissions
      */
-    public function pageCircles(){
-        // Access-controlled page
-        if (!$this->_app->user->checkAccess('uri_circles')){
-            $this->_app->notFound();
+    public function pageCircle($id, $visitor_id){
+
+        
+
+        $circle_info = Circle::where('id',$id)->first();
+        $circle_user = User::where('id',$visitor_id)->first();
+
+        $circle = Circle::find($id);
+        $circleUserList = $circle->users;
+
+
+        /**
+         * type means the type of visitor who's viewing this circle
+         *
+         * 0 - Guest(Not a memeber of the circle) 
+         * 1 - Member but not admin
+         * 2 - Admin 
+         * By default this is 0(Guest)
+         */
+        $type = '0';
+
+        error_log("Size ".sizeof($circleUserList));
+
+        foreach ($circleUserList as $temp_user) {
+
+            error_log($temp_user->pivot->id);
+            
+            if($temp_user->id == $visitor_id) {
+                if($temp_user->pivot->admin == '1') $type = '2';
+                else $type = '1';
+            }
+            
         }
 
-        $circles = Circle::queryBuilder()->get();
 
-        $this->_app->render('circles/circles.twig', [
-            "circles" => $circles
-        ]);
+        if(isset($circle_user['id'])){
+            //$this->_app->render('circle.twig', ['circle'=>$circle_info,'visitor'=>$circle_user, 'users'=>$circleUserList, 'projects'=>$circleProjectList], 'type'=>$type); 
+            $this->_app->render('circle.twig', ['circle'=>$circle_info,'visitor'=>$circle_user, 'type'=>$type]); 
+            return true;
+        }   
+        return false;
     }
 
     public function pageCircleAuthorization($circle_id) {
@@ -268,6 +298,49 @@ class CircleController extends \ToolsEd\BaseController {
         return $ret;
 
     }
+
+
+    public function getCircleUserList($circle_id){
+
+
+        $users=Circle::find($circle_id)->users;
+
+        /*
+        $ret=array();
+
+        foreach($users as $user){
+            error_log($user->id);
+            $ret[$user->id]=array("label"=>($circle->name),"photo"=>($circle->photo));
+        }
+
+        */
+        
+
+        return $ret;
+
+    }
+
+    public function getCircleProjectList($circle_id){
+
+
+        $projects=Circle::find($circle_id)->projects;
+
+        /*
+
+        $ret=array();
+
+        foreach($projects as $project){
+            error_log($project->id);
+            $ret[$project->id]=array("label"=>($project->name),"photo"=>($project->photo));
+        }
+
+        */        
+        
+
+        return $ret;
+
+    }
+
 
     /**
      * Processes the request to update an existing circle's details.
